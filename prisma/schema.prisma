@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  // provider = "prisma-client"
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
 }
 
 datasource db {
@@ -8,33 +9,39 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
-  name           String
-  email          String          @unique
-  password       String
-  role           Role
-  status         Status          @default(ACTIVE)
-  createdAt      DateTime        @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  status    Status   @default(ACTIVE)
+  createdAt DateTime @default(now())
+
   communityPosts CommunityPost[]
   orders         Order[]
   vendorProfile  VendorProfile?
+
+  @@map("users")
 }
 
 model VendorProfile {
-  id                  String               @id @default(uuid())
-  userId              String               @unique
+  id                  String @id @default(uuid())
+  userId              String @unique
   farmName            String
   certificationStatus String
   farmLocation        String
+
   orders              Order[]
   products            Product[]
   rentalSpaces        RentalSpace[]
   sustainabilityCerts SustainabilityCert[]
   user                User                 @relation(fields: [userId], references: [id])
+
+  @@map("vendor_profiles")
 }
 
 model Product {
-  id                  String        @id @default(uuid())
+  id                  String @id @default(uuid())
   vendorId            String
   name                String
   description         String
@@ -42,46 +49,61 @@ model Product {
   category            String
   certificationStatus String
   availableQuantity   Int
-  orders              Order[]
-  vendor              VendorProfile @relation(fields: [vendorId], references: [id])
+
+  orders Order[]
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+
+  @@map("products")
 }
 
 model RentalSpace {
-  id           String        @id @default(uuid())
+  id           String  @id @default(uuid())
   vendorId     String
   location     String
   size         Int
   price        Float
   availability Boolean
-  vendor       VendorProfile @relation(fields: [vendorId], references: [id])
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+
+  @@map("rental_spaces")
 }
 
 model Order {
-  id        String        @id @default(uuid())
+  id        String   @id @default(uuid())
   userid    String
   produceId String
   vendorId  String
   status    String
-  orderDate DateTime      @default(now())
-  product   Product       @relation(fields: [produceId], references: [id])
-  user      User          @relation(fields: [userid], references: [id])
-  vendor    VendorProfile @relation(fields: [vendorId], references: [id])
+  orderDate DateTime @default(now())
+
+  product Product       @relation(fields: [produceId], references: [id])
+  user    User          @relation(fields: [userid], references: [id])
+  vendor  VendorProfile @relation(fields: [vendorId], references: [id])
+
+  @@map("orders")
 }
 
 model CommunityPost {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   userId      String
   postContent String
-  postDate    DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+
+  postDate DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@map("community_posts")
 }
 
 model SustainabilityCert {
-  id                String        @id @default(uuid())
+  id                String   @id @default(uuid())
   vendorId          String
   certifyingAgency  String
-  certificationDate DateTime      @default(now())
-  vendor            VendorProfile @relation(fields: [vendorId], references: [id])
+  certificationDate DateTime @default(now())
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+
+  @@map("sustainability_certs")
 }
 
 enum Role {

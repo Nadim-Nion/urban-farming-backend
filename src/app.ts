@@ -25,7 +25,7 @@ app.use(
 app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello Express Project Setup! 😊');
+  res.send('Hello Urban Farming Platform! 😊');
 });
 
 // Not Found Route
