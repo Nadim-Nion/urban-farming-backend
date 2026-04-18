@@ -1,8 +1,8 @@
-# 🚀 Express Project Setup
+# 🚀 Urban Farming Platform (Backend)
 
 ---
 
-A scalable and production-ready backend starter template built with Express.js, Node.js, MongoDB, Mongoose, and TypeScript. This boilerplate is designed to help developers quickly kickstart RESTful API development with a well-structured and maintainable architecture.
+A scalable, production-ready backend starter built with Express.js, Node.js, PostgreSQL, Prisma, and TypeScript. This template provides a solid foundation for developing RESTful APIs with a clean, modular architecture, enabling rapid development, maintainability, and long-term scalability.
 
 ---
 
@@ -10,8 +10,8 @@ A scalable and production-ready backend starter template built with Express.js, 
 
 - Node.js – JavaScript runtime
 - Express.js – Web framework for building APIs
-- MongoDB – NoSQL database
-- Mongoose – ODM for MongoDB
+- PostgreSQL – NoSQL database
+- Prisma – ORM for PostgreSQL
 - TypeScript – Strongly typed JavaScript
 
 ---
