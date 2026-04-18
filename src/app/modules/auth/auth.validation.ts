@@ -16,6 +16,18 @@ const registerValidationSchema = z.object({
   }),
 });
 
+const loginValidationSchema = z.object({
+  body: z.object({
+    email: z
+      .string({ error: 'Email must be a string' })
+      .email({ message: 'Invalid email address' }),
+    password: z
+      .string({ error: 'Password must be a string' })
+      .max(20, { message: 'Password can not be more than 20 characters' }),
+  }),
+});
+
 export const AuthValidations = {
   registerValidationSchema,
+  loginValidationSchema,
 };
