@@ -6,7 +6,7 @@ import AppError from '../errors/AppError';
 import catchAsync from '../utils/catchAsync';
 // import type { TUserRole } from '../modules/user/user.interface';
 import type { TUserRole2 } from '../modules/auth/auth.interface.';
-import { User } from '../modules/user/user.model';
+// import { User } from '../modules/user/user.model';
 import prisma from '../../lib/prisma';
 
 const auth = (...requiredRoles: TUserRole2[]) => {
@@ -30,7 +30,7 @@ const auth = (...requiredRoles: TUserRole2[]) => {
     }
 
     // Check whether the user has the permission to access the resource
-    const { userId, role, iat } = decoded;
+    const { userId, role } = decoded;
 
     // check the user is exist or not
     // const user = await User.isUserExistsByCustomId(userId);
