@@ -11,3 +11,97 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  status    Status   @default(ACTIVE)
+  createdAt DateTime @default(now())
+
+  vendorProfile  VendorProfile?
+  orders         Order[]
+  communityPosts CommunityPost[]
+}
+
+model VendorProfile {
+  id                  String @id @default(uuid())
+  userId              String @unique
+  farmName            String
+  certificationStatus String
+  farmLocation        String
+
+  user                User                 @relation(fields: [userId], references: [id])
+  products            Product[]
+  rentalSpaces        RentalSpace[]
+  orders              Order[]
+  sustainabilityCerts SustainabilityCert[]
+}
+
+model Product {
+  id                  String @id @default(uuid())
+  vendorId            String
+  name                String
+  description         String
+  price               Float
+  category            String
+  certificationStatus String
+  availableQuantity   Int
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+  orders Order[]
+}
+
+model RentalSpace {
+  id           String  @id @default(uuid())
+  vendorId     String
+  location     String
+  size         Int
+  price        Float
+  availability Boolean
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userid    String
+  produceId String
+  vendorId  String
+  status    String
+  orderDate DateTime @default(now())
+
+  user    User          @relation(fields: [userid], references: [id])
+  product Product       @relation(fields: [produceId], references: [id])
+  vendor  VendorProfile @relation(fields: [vendorId], references: [id])
+}
+
+model CommunityPost {
+  id          String   @id @default(uuid())
+  userId      String
+  postContent String
+  postDate    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+model SustainabilityCert {
+  id                String   @id @default(uuid())
+  vendorId          String
+  certifyingAgency  String
+  certificationDate DateTime @default(now())
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum Status {
+  ACTIVE
+  BLOCKED
+}
