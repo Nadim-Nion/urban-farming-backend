@@ -25,10 +25,10 @@ model User {
 }
 
 model VendorProfile {
-  id                  String @id @default(uuid())
-  userId              String @unique
+  id                  String       @id @default(uuid())
+  userId              String       @unique
   farmName            String
-  certificationStatus String
+  certificationStatus VendorStatus @default(PENDING)
   farmLocation        String
 
   orders              Order[]
@@ -115,4 +115,10 @@ enum Role {
 enum Status {
   ACTIVE
   BLOCKED
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

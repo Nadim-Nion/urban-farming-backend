@@ -4,11 +4,13 @@ import jwt, { type JwtPayload } from 'jsonwebtoken';
 import config from '../config';
 import AppError from '../errors/AppError';
 import catchAsync from '../utils/catchAsync';
-import type { TUserRole } from '../modules/user/user.interface';
+// import type { TUserRole } from '../modules/user/user.interface';
+import type { TUserRole2 } from '../modules/auth/auth.interface.';
 import { User } from '../modules/user/user.model';
+import prisma from '../../lib/prisma';
 
-
-const auth = (...requiredRoles: TUserRole[]) => {
+const auth = (...requiredRoles: TUserRole2[]) => {
+  //TUserRole
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // Check whether the token is sent from the client
     const token = req.headers.authorization;
@@ -31,26 +33,31 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const { userId, role, iat } = decoded;
 
     // check the user is exist or not
-    const user = await User.isUserExistsByCustomId(userId);
+    // const user = await User.isUserExistsByCustomId(userId);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'User not found');
     }
 
     // Check the user is deleted or not
-    const isUserDeleted = user?.isDeleted;
+    // const isUserDeleted = user?.isDeleted;
 
-    if (isUserDeleted) {
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        'User is deleted, please contact with admin',
-      );
-    }
+    // if (isUserDeleted) {
+    //   throw new AppError(
+    //     httpStatus.FORBIDDEN,
+    //     'User is deleted, please contact with admin',
+    //   );
+    // }
 
     // Check the user is blocked or not
     const userStatus = user?.status;
 
-    if (userStatus === 'blocked') {
+    if (userStatus === 'BLOCKED') {
       throw new AppError(
         httpStatus.FORBIDDEN,
         'User is blocked, please contact with admin',
@@ -58,12 +65,12 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
 
     // Check the password was changed after the JWT was issued
-    if (
-      user.passwordChangeAt &&
-      User.isJWTIssuedBeforePasswordChange(user.passwordChangeAt, iat as number)
-    ) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
-    }
+    // if (
+    //   user.passwordChangeAt &&
+    //   User.isJWTIssuedBeforePasswordChange(user.passwordChangeAt, iat as number)
+    // ) {
+    //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+    // }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
